@@ -3,7 +3,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import router from "./Auth-Logic/Routers/authRouter.js";
-import errorMidlware from "./Auth-Logic/Middlewares/error-midlware.js"
+import errorMiddlware from "./Auth-Logic/Middlewares/error-middlware.js"
 
 dotenv.config();
 
@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cookieParser());
 app.use('/auth', router);
-app.use(errorMidlware)
+app.use(errorMiddlware)
 mongoose
   .connect(process.env.DB_URL)
   .then(() => console.log(`Connect to MongoDB`))
