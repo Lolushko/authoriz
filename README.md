@@ -1,3 +1,4 @@
-# Complex authorization NodeJS + expressJS + gmail + mongoDB
+## authorization and creation of goods in the database technology stack:
+### Node JS, ExpressJS, JavaScript, MongoDB, PostgreSQL, Docker
 
-This is my first authorization project
+#### p.s. substitute your data in .env
