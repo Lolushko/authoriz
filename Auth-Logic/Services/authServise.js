@@ -21,8 +21,8 @@ class AuthServise {
 
     const hashPassword = bcrypt.hashSync(password, 5);
     const activationLink = uuidv4() 
-
-    const user = new User({ username, email, password: hashPassword, activationLink });
+    
+    const user = new User({ username, email, password: hashPassword, activationLink, roles: ["Admin"] });
     await MailService.sendActivationMail(email, `${process.env.API_URL}/auth/activate/${activationLink}`) 
     await user.save()
     return true;
@@ -67,7 +67,7 @@ class AuthServise {
     if (!token) {
       throw ApiError.BadRequest('refresh tokens do not match')
     } 
-    const user = User.findOne({ userId })
+    const user = await User.findOne({ _id: userId })
     const userDto = new UserDTO(user)
     const tokens = TokenService.generationToken({ ...userDto })
     return tokens.accessToken
