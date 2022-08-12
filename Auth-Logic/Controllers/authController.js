@@ -1,7 +1,7 @@
 import Jwt from "jsonwebtoken";
-import ApiError from "../exeptions/api-error.js";
 import { validationResult } from "express-validator";
 import authServise from "../Services/authServise.js";
+import ApiError from "../../Api-error/exeptions/api-error.js";
 
 class AuthControllers {
 
@@ -53,7 +53,7 @@ class AuthControllers {
       const { id } = Jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET)
       const logout = await authServise.logout(id, refreshToken)
       res.clearCookie('refreshToken', { httpOnly: true })
-      res.status(200).json({ message: 'ok' })
+      res.status(200)
     } catch (err) {
       next(err)
     }

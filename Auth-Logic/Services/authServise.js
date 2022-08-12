@@ -5,13 +5,14 @@ import Token from "../Models/token.js";
 import UserDTO from "../dto/userDTO.js";
 import MailService from "./emailService.js";
 import TokenService from "./tokenService.js";
-import ApiError from "../exeptions/api-error.js";
+import ApiError from "../../Api-error/exeptions/api-error.js";
 
 class AuthServise {
 
   async userRegistartion(username, password, email) {  
     const condidateName = await User.findOne({ email });
     const condidateEmail = await User.findOne({ username })
+    const roles = ['User'] 
     if (condidateName) {
       throw ApiError.BadRequest(`user with email address ${email} already exists`)
     } 
@@ -22,7 +23,7 @@ class AuthServise {
     const hashPassword = bcrypt.hashSync(password, 5);
     const activationLink = uuidv4() 
     
-    const user = new User({ username, email, password: hashPassword, activationLink, roles: ["Admin"] });
+    const user = new User({ username, email, password: hashPassword, activationLink, roles });
     await MailService.sendActivationMail(email, `${process.env.API_URL}/auth/activate/${activationLink}`) 
     await user.save()
     return true;

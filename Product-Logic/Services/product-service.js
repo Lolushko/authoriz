@@ -1,72 +1,55 @@
-import db from "../postgresDB/db.js"
-import searchDb from "../postgresDB/search-db.js"
-import ChangeDTO from "../dto/change-DTO.js"
-
+import ChangeDto from "../dto/change-DTO.js";
+import db from "../postgresDB/S-connect-DB.js";
+import Product from "../postgresDB/Smodels.js";
+import serach from "../Middlewares/serach-middelware.js";
 class ProductService {
-  async createProduct(product) {
-    const { name, model, color, year, customid } = product
-    const newProduct = await db.query(`
-    INSERT INTO product(name, model, color, year, customid)
-    values ($1, $2, $3, $4, $5) RETURNING *`, 
-    [name, model, color, year, customid])
-
-    return newProduct.rows[0]
+  async createProduct(productDto) {
+    const product = new Product({ 
+      name: productDto.name,
+      model: productDto.model, 
+      color: productDto.color,
+      year: productDto.year, 
+      customid: productDto.customid
+    })
+    await product.save()
+    return await Product.findOne({ 
+      where: {
+        customid: product.customid
+      }, 
+      row: true
+    })
   }
 
   async getProduct(info) {
-    const data = {
-      table: {},
-      limit: info.limit || 4,
-      page: Number(info.page) || 1
+    const { limit, page } = info
+    const offset = Number(page * limit - limit)
+    const params = {
+      group: [],
+      where: {},
+      limit: limit,
+      offset: offset,
     }
-    const offset = data.page * data.limit - data.limit
-
-    if (info.name && !info.model && !info.color && !info.year) {
-      data.table = await searchDb.searchN(info.name, data.limit, offset)
-    }
-    if (info.name && info.color && !info.year && !info.model ) {
-      data.table = await searchDb.searchNC(info.name, info.color, data.limit, offset)
-    }
-    if (info.name && info.year && !info.color && !info.model) {
-      data.table = await searchDb.searchNY(info.name, info.year, data.limit, offset)
-    }
-    if (info.name && info.model && !info.color && !info.year) {
-      data.table = await searchDb.searchNM(info.name, info.model, data.limit, offset)
-    }
-    if (info.name && info.model && info.year && !info.color) {
-      data.table = await searchDb.searchNMY(info.name, info.model, info.year, data.limit, offset)
-    }
-    if (info.name && info.model && info.color && !info.year) {
-      data.table = await searchDb.searchNMC(info.name, info.model, info.color, data.limit, offset)
-    }
-    if (info.name && info.model && info.color && info.year) {
-      data.table = await searchDb.searchNMCY(info.name, info.model, info.color, info.year, data.limit, offset)
-    }
-    if (!info.name && !info.model && !info.color && !info.year || !data.table.rows[0]) {
-      data.table = await searchDb.search(data.limit, offset)
-    }
-    return data.table.rows
+    const { count, rows }  = await Product.findAndCountAll({ ...serach(info, params) })
+    return { count, rows }
   }
-
+ 
   async changeProduct(data) {
-    const product = (await db.query(`SELECT * FROM product WHERE customid = '${data.customid}'`)).rows[0]
-    const newData = new ChangeDTO(data, { ...product })
-    await db.query(`
-    UPDATE product
-    SET name='${newData.name}',
-    model='${newData.model}',
-    color='${newData.color}',
-    year=${newData.year}
-    WHERE id = ${newData.id}`)
-    return (await db.query(`SELECT * FROM product WHERE customid = '${data.customid}'`)).rows[0]
+    const product = await Product.findOne({
+      where: {
+        customid: data.customid
+      },
+      rows: true
+    })
+    const change = new ChangeDto(data, product)
+    const newProduct = await Product.upsert({ ...change })
+    return newProduct
   }
   async deleteProduct(customid) {
-    const product = (await db.query(`SELECT * FROM product WHERE customid = '${customid}'`)).rows[0]
+    const product = await Product.findOne({ where: { customid } }) 
     if (product) {
-      await db.query(`DELETE FROM product WHERE customid = '${customid}'`)
+      await product.destroy()
       return true
-    } 
-    return product
+    }  
   }
 }
 

@@ -12,7 +12,7 @@ export default class ProductDTO {
     this.color = model.color
     this.year = model.year
     this.customid = model.customid
-    this.limit = model.limit
-    this.page = model.page
+    this.limit = model.limit || 4
+    this.page = model.page || 1
   }
 }
