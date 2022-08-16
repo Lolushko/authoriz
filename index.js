@@ -19,6 +19,7 @@ postgres
   .authenticate()
   .then(() => console.log(`Connect to Postgres`))
   .catch(err => console.log(err))
+  
 mongoose
   .connect(process.env.MONGO_DB_URL)
   .then(() => console.log(`Connect to MongoDB`))

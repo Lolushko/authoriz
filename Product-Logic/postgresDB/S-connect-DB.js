@@ -6,11 +6,9 @@ const db = new Sequelize(
   process.env.POSTGRES_DB_PASSWORD,
   {
     host: process.env.POSTGRES_DB_HOST,
+    port: process.env.POSTGRES_DB_PORT,
     logging: (msg) => console.log(msg),
     dialect: 'postgres',
-    define: {
-      timestamps: false
-    }
   }
 )
 

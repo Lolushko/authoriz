@@ -1,9 +1,9 @@
-import productDto from "../dto/product-DTO.js"
+import ProductDto from "../dto/product-DTO.js"
 import productService from "../Services/product-service.js"
 class ProductController {
   async createProduct(req, res, next) {
     try {
-      const data = new productDto(req.query)
+      const data = new ProductDto(req.query)
       const newProduct = await productService.createProduct({ ...data })
       res.status(201).json(newProduct)
     } catch (err) {
@@ -13,7 +13,7 @@ class ProductController {
 
   async getProduct(req, res, next) { 
     try {
-      const data = new productDto(req.query)
+      const data = new ProductDto(req.query)
       const { count, rows } = await productService.getProduct({ ...data })
       if (count[0].count === 0 || !rows[0]) {
         res.status(204).json({ message: 'product not found' })
@@ -27,7 +27,7 @@ class ProductController {
 
   async changeProduct(req, res, next) {
     try {
-      const data = new productDto(req.query)
+      const data = new ProductDto(req.query)
       const answer = await productService.changeProduct({ ...data })
       if (!answer) {
         res.status(204).message({ message: 'product not found' })

@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
-import sequelize from "./S-connect-DB.js";
+import db from "./S-connect-DB.js";
 
-const Product = sequelize.define('Product', {
+const Product = db.define('Product', {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -29,7 +29,7 @@ const Product = sequelize.define('Product', {
   }
 }, 
 {
-  tableName: 'product'
+  tableName: 'products'
 })
 
 export default Product

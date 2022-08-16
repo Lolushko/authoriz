@@ -1,14 +1,37 @@
 version: "3.9"
 
 services:
+  server: 
+   
+    container_name: server
+    build: 
+      context: .
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - 3000:3000
+    command: npm run dev
+    depends_on:
+      - pg_db
+    restart: always 
+
   pg_db:
     container_name: pg_db
-    ports:
-      - "5432:5432"
+    image: postgres:13.7-alpine3.16
+    env_file:
+      - .env
     environment:
       - POSTGRES_PASSWORD=1234
       - POSTGRES_USER=Admin
-    image: postgres:13.7-alpine3.16
-      
+    ports:
+      - 5432:5432
+    restart: always 
+
+volumes:
+  pgdata: 
+
       
 

@@ -1,5 +1,4 @@
 import ChangeDto from "../dto/change-DTO.js";
-import db from "../postgresDB/S-connect-DB.js";
 import Product from "../postgresDB/Smodels.js";
 import serach from "../Middlewares/serach-middelware.js";
 class ProductService {
