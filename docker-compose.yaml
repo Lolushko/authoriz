@@ -2,7 +2,6 @@ version: "3.9"
 
 services:
   server: 
-   
     container_name: server
     build: 
       context: .
@@ -17,7 +16,6 @@ services:
     depends_on:
       - pg_db
     restart: always 
-
   pg_db:
     container_name: pg_db
     image: postgres:13.7-alpine3.16
@@ -29,9 +27,6 @@ services:
     ports:
       - 5432:5432
     restart: always 
-
-volumes:
-  pgdata: 
 
       
 
