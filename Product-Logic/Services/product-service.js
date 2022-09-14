@@ -1,19 +1,19 @@
 import ChangeDto from "../dto/change-DTO.js";
 import Product from "../postgresDB/Smodels.js";
+import db from "../postgresDB/S-connect-DB.js";
 import serach from "../Middlewares/serach-middelware.js";
 class ProductService {
   async createProduct(productDto) {
-    const product = new Product({ 
+    const product = await Product.create({ 
       name: productDto.name,
       model: productDto.model, 
       color: productDto.color,
       year: productDto.year, 
       customid: productDto.customid
     })
-    await product.save()
     return await Product.findOne({ 
       where: {
-        customid: product.customid
+        customid: productDto.customid
       }, 
       row: true
     })

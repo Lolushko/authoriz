@@ -39,7 +39,7 @@ class AuthServise {
       return 'invalid password'
     }
     const userDto = new UserDTO(user)
-    const tokens = TokenService.generationToken({ ...userDto })
+    const tokens = TokenService.generationToken(userDto)
     await TokenService.saveToken(userDto.id, tokens.refreshToken) 
     return { ...tokens, user: userDto }
   }
